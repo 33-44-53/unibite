@@ -8,6 +8,7 @@ import 'menu_screen.dart';
 import 'history_screen.dart';
 import 'profile_screen.dart';
 import 'login_screen.dart';
+import 'deposit_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -69,6 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final Set<int> selectedIds = {};
     double totalCost = 0;
+    final Map<int, int> quantities = {}; // food id -> quantity
 
     showModalBottomSheet(
       context: context,
@@ -132,9 +134,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           setModalState(() {
                             if (selected) {
                               selectedIds.remove(food.id);
-                              totalCost -= food.price;
+                              totalCost -= food.price * (quantities[food.id] ?? 1);
+                              quantities.remove(food.id);
                             } else {
                               selectedIds.add(food.id);
+                              quantities[food.id] = 1;
                               totalCost += food.price;
                             }
                           });
@@ -192,19 +196,69 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ],
                                 ),
                               ),
-                              // Checkbox
+                              // Quantity controls
                               Padding(
-                                padding: const EdgeInsets.only(right: 12),
-                                child: Container(
-                                  width: 26, height: 26,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: selected ? const Color(0xFF2E7D32) : Colors.grey.shade200,
-                                  ),
-                                  child: selected
-                                      ? const Icon(Icons.check, color: Colors.white, size: 16)
-                                      : null,
-                                ),
+                                padding: const EdgeInsets.only(right: 8),
+                                child: selected
+                                    ? Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              setModalState(() {
+                                                final qty = quantities[food.id] ?? 1;
+                                                if (qty <= 1) {
+                                                  selectedIds.remove(food.id);
+                                                  totalCost -= food.price;
+                                                  quantities.remove(food.id);
+                                                } else {
+                                                  quantities[food.id] = qty - 1;
+                                                  totalCost -= food.price;
+                                                }
+                                              });
+                                            },
+                                            child: Container(
+                                              width: 26, height: 26,
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey.shade200,
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: const Icon(Icons.remove, size: 14),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(horizontal: 6),
+                                            child: Text(
+                                              '${quantities[food.id] ?? 1}',
+                                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              setModalState(() {
+                                                final qty = quantities[food.id] ?? 1;
+                                                quantities[food.id] = qty + 1;
+                                                totalCost += food.price;
+                                              });
+                                            },
+                                            child: Container(
+                                              width: 26, height: 26,
+                                              decoration: const BoxDecoration(
+                                                color: Color(0xFF2E7D32),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: const Icon(Icons.add, size: 14, color: Colors.white),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : Container(
+                                        width: 26, height: 26,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.grey.shade200,
+                                        ),
+                                      ),
                               ),
                             ],
                           ),
@@ -248,10 +302,16 @@ class _HomeScreenState extends State<HomeScreen> {
                               ? null
                               : () {
                                   Navigator.pop(ctx);
-                                  _confirmPurchase(
-                                    foods.where((f) => selectedIds.contains(f.id)).toList(),
-                                    totalCost,
-                                  );
+                                  // Build items list with quantities
+                                  final List<MenuItem> itemsToOrder = [];
+                                  for (final id in selectedIds) {
+                                    final food = foods.firstWhere((f) => f.id == id);
+                                    final qty = quantities[id] ?? 1;
+                                    for (int i = 0; i < qty; i++) {
+                                      itemsToOrder.add(food);
+                                    }
+                                  }
+                                  _confirmPurchase(itemsToOrder, totalCost);
                                 },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF2E7D32),
@@ -261,7 +321,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(
                             selectedIds.isEmpty
                                 ? t('Select at least one item', 'ቢያንስ አንድ ምግብ ይምረጡ')
-                                : t('Order (${totalCost.toInt()} ETB)', 'ይዘዙ (${totalCost.toInt()} ብር)'),
+                                : t('Order ${quantities.values.fold(0, (a, b) => a + b)} item(s) — ${totalCost.toInt()} ETB', '${quantities.values.fold(0, (a, b) => a + b)} ምግብ ይዘዙ — ${totalCost.toInt()} ብር'),
                             style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                           ),
                         ),
@@ -320,7 +380,18 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     if (mounted) {
-      final names = items.map((e) => appLanguage.isAmharic ? e.titleAmharic : e.title).join(', ');
+      // Group items by name and count quantities
+      final Map<String, int> itemCounts = {};
+      final Map<String, String> itemCountsAm = {};
+      for (final item in items) {
+        final key = item.title;
+        itemCounts[key] = (itemCounts[key] ?? 0) + 1;
+        itemCountsAm[key] = item.titleAmharic;
+      }
+      final names = itemCounts.entries.map((e) {
+        final label = appLanguage.isAmharic ? itemCountsAm[e.key]! : e.key;
+        return e.value > 1 ? '${e.value}× $label' : label;
+      }).join(', ');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(children: [
@@ -355,7 +426,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
     if (confirm == true) {
-      await StorageService.clearAll();
+      await StorageService.logout();
       if (mounted) Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
     }
   }
@@ -415,6 +486,35 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 18),
 
             BalanceCard(balance: _balance, mealCount: _mealCount),
+            const SizedBox(height: 12),
+
+            // Deposit button
+            SizedBox(
+              width: double.infinity,
+              height: 46,
+              child: OutlinedButton.icon(
+                onPressed: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => DepositScreen(currentBalance: _balance),
+                    ),
+                  );
+                  if (result != null) {
+                    setState(() => _balance = result as double);
+                  }
+                },
+                icon: const Icon(Icons.add_circle_outline, color: Color(0xFF2E7D32)),
+                label: Text(
+                  t('Deposit Funds', 'ገንዘብ ያስቀምጡ'),
+                  style: const TextStyle(color: Color(0xFF2E7D32), fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Color(0xFF2E7D32), width: 1.5),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+            ),
             const SizedBox(height: 24),
 
             Text(t('Order a Meal', 'ምግብ ይዘዙ'),

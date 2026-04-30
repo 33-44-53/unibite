@@ -21,3 +21,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - cbe.jpg
+    - telebirr.webp
+    - ebirr.png
+    - mpesa.png

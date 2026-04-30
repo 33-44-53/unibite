@@ -224,7 +224,7 @@ class _LandingScreenState extends State<LandingScreen>
                       Container(width: 1, height: 40, color: Colors.white.withOpacity(0.3)),
                       _StatBadge(value: '3', label: t('Meal Times', 'የምግብ ጊዜዎች')),
                       Container(width: 1, height: 40, color: Colors.white.withOpacity(0.3)),
-                      _StatBadge(value: '3000', label: t('ETB Start', 'ብር ጅምር')),
+                      _StatBadge(value: '4', label: t('Payments', 'ክፍያዎች')),
                     ],
                   ),
                   const SizedBox(height: 40),

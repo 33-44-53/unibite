@@ -196,7 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
     if (confirm == true) {
-      await StorageService.clearAll();
+      await StorageService.resetCurrentAccount();
       if (mounted) {
         Navigator.pushAndRemoveUntil(
           context,
