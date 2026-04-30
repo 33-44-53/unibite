@@ -1079,3 +1079,9 @@ Try `flutter pub outdated` for more information.
 [        ] Invalidating in-memory cache of C:\Users\Oumer\Desktop\my projects\unibite\android\.gradle\8.3\checksums\sha512-checksums.bin
 [  +87 ms] Invalidating in-memory cache of C:\Users\Oumer\.gradle\caches\journal-1\file-access.bin
 [+11406 ms] Cached resource https://dl.google.com/dl/android/maven2/com/android/tools/build/apksig/8.1.0/apksig-8.1.0.jar is up-to-date (lastModified: Tue Jul 25 20:13:59 EAT 2023).
+[+102101 ms] Cached resource https://repo.maven.apache.org/maven2/org/apache/httpcomponents/httpclient/4.5.13/httpclient-4.5.13.jar is up-to-date (lastModified: Sat Oct 03 17:47:40 EAT 2020).
+[+17889 ms] Invalidating in-memory cache of C:\Users\Oumer\Desktop\my projects\unibite\android\.gradle\8.3\checksums\md5-checksums.bin
+[        ] Invalidating in-memory cache of C:\Users\Oumer\Desktop\my projects\unibite\android\.gradle\8.3\checksums\sha256-checksums.bin
+[        ] Invalidating in-memory cache of C:\Users\Oumer\Desktop\my projects\unibite\android\.gradle\8.3\checksums\sha1-checksums.bin
+[        ] Invalidating in-memory cache of C:\Users\Oumer\Desktop\my projects\unibite\android\.gradle\8.3\checksums\sha512-checksums.bin
+[+2005 ms] Invalidating in-memory cache of C:\Users\Oumer\.gradle\caches\journal-1\file-access.bin
