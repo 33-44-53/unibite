@@ -177,90 +177,93 @@ class _MenuCard extends StatelessWidget {
     final isAm = appLanguage.isAmharic;
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(16), topRight: Radius.circular(16),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                item.image,
+                width: 80, height: 80, fit: BoxFit.cover,
+                loadingBuilder: (ctx, child, progress) {
+                  if (progress == null) return child;
+                  return Container(width: 80, height: 80, color: Colors.grey[100],
+                      child: const Center(child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF2E7D32))));
+                },
+                errorBuilder: (_, __, ___) => Container(width: 80, height: 80,
+                    color: Colors.grey[100], child: const Icon(Icons.fastfood, color: Colors.grey, size: 36)),
+              ),
             ),
-            child: Image.network(
-              item.image,
-              width: double.infinity, height: 160, fit: BoxFit.cover,
-              loadingBuilder: (ctx, child, progress) {
-                if (progress == null) return child;
-                return Container(width: double.infinity, height: 160, color: Colors.grey[100],
-                    child: const Center(child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF2E7D32))));
-              },
-              errorBuilder: (_, __, ___) => Container(width: double.infinity, height: 160,
-                  color: Colors.grey[100], child: const Icon(Icons.fastfood, color: Colors.grey, size: 48)),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              isAm ? item.titleAmharic : item.title,
+                              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF1B5E20)),
+                            ),
+                            Text(
+                              isAm ? item.title : item.titleAmharic,
+                              style: const TextStyle(fontSize: 11, color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: categoryColor.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: categoryColor.withOpacity(0.4)),
+                        ),
+                        child: Text(
+                          isAm ? item.category : item.categoryEn,
+                          style: TextStyle(fontSize: 11, color: categoryColor, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    isAm ? item.description : item.descriptionEn,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 12, color: Colors.black87, height: 1.4),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(color: const Color(0xFFFF6F00), borderRadius: BorderRadius.circular(20)),
+                        child: Text('${item.price.toStringAsFixed(0)} ${isAm ? 'ብር' : 'ETB'}',
+                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                      ),
+                      const Row(children: [
+                        Icon(Icons.star, color: Color(0xFFFF6F00), size: 14),
+                        Icon(Icons.star, color: Color(0xFFFF6F00), size: 14),
+                        Icon(Icons.star, color: Color(0xFFFF6F00), size: 14),
+                        Icon(Icons.star, color: Color(0xFFFF6F00), size: 14),
+                        Icon(Icons.star_half, color: Color(0xFFFF6F00), size: 14),
+                      ]),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            isAm ? item.titleAmharic : item.title,
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1B5E20)),
-                          ),
-                          Text(
-                            isAm ? item.title : item.titleAmharic,
-                            style: const TextStyle(fontSize: 12, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: categoryColor.withOpacity(0.12),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: categoryColor.withOpacity(0.4)),
-                      ),
-                      child: Text(
-                        isAm ? item.category : item.categoryEn,
-                        style: TextStyle(fontSize: 12, color: categoryColor, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  isAm ? item.description : item.descriptionEn,
-                  style: const TextStyle(fontSize: 13, color: Colors.black87, height: 1.5),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                      decoration: BoxDecoration(color: const Color(0xFFFF6F00), borderRadius: BorderRadius.circular(20)),
-                      child: Text('${item.price.toStringAsFixed(0)} ${isAm ? 'ብር' : 'ETB'}',
-                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
-                    ),
-                    const Row(children: [
-                      Icon(Icons.star, color: Color(0xFFFF6F00), size: 16),
-                      Icon(Icons.star, color: Color(0xFFFF6F00), size: 16),
-                      Icon(Icons.star, color: Color(0xFFFF6F00), size: 16),
-                      Icon(Icons.star, color: Color(0xFFFF6F00), size: 16),
-                      Icon(Icons.star_half, color: Color(0xFFFF6F00), size: 16),
-                    ]),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
