@@ -51,4 +51,31 @@ class ApiService {
       throw Exception('Server error: ${response.statusCode}');
     }
   }
+
+  static Future<List<ApiProduct>> fetchMenuMeals() async {
+    // Fetch multiple categories for variety
+    final categories = ['Chicken', 'Beef', 'Seafood', 'Vegetarian', 'Breakfast'];
+    final List<ApiProduct> all = [];
+    int idCounter = 1;
+    for (final cat in categories) {
+      final response = await http
+          .get(Uri.parse('https://www.themealdb.com/api/json/v1/1/filter.php?c=$cat'))
+          .timeout(const Duration(seconds: 15));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final List<dynamic> meals = data['meals'] ?? [];
+        for (final m in meals.take(4)) {
+          all.add(ApiProduct(
+            id: idCounter++,
+            title: m['strMeal'] as String,
+            price: 0.0,
+            image: m['strMealThumb'] as String,
+            category: cat,
+            description: cat,
+          ));
+        }
+      }
+    }
+    return all;
+  }
 }
