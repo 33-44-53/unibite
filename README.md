@@ -8,7 +8,7 @@ A Flutter mobile application for managing university student café meal contract
 
 ## 🎥 Demo Video
 
-> 📹 **Loom Presentation Video:** [Add your Loom link here]
+> 📹 **Loom Presentation Video:** [Watch Presentation](https://www.loom.com/share/b1d42cc98bb84e40b6a983fd776444fc)
 >
 > - Duration: 25–30 minutes
 > - Each member states their name and Student ID before presenting
