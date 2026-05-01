@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-// Represents a product fetched from FakeStore API
 class ApiProduct {
   final int id;
   final String title;
@@ -19,30 +18,35 @@ class ApiProduct {
     required this.description,
   });
 
-  factory ApiProduct.fromJson(Map<String, dynamic> json) {
+  factory ApiProduct.fromMealJson(Map<String, dynamic> json, int index) {
     return ApiProduct(
-      id: json['id'] as int,
-      title: json['title'] as String,
-      price: (json['price'] as num).toDouble(),
-      image: json['image'] as String,
-      category: json['category'] as String,
-      description: json['description'] as String,
+      id: index,
+      title: json['strMeal'] as String,
+      price: 0.0,
+      image: json['strMealThumb'] as String,
+      category: json['strCategory'] as String? ?? 'Meal',
+      description: json['strArea'] != null ? '${json['strArea']} cuisine' : 'Delicious meal',
     );
   }
 }
 
 class ApiService {
-  static const String _url = 'https://fakestoreapi.com/products';
+  // TheMealDB — free public API, no key needed
+  static const String _url = 'https://www.themealdb.com/api/json/v1/1/search.php?s=';
 
-  // Fetch all products — used in ApiMenuScreen (Topic 5)
   static Future<List<ApiProduct>> fetchProducts() async {
     final response = await http
         .get(Uri.parse(_url))
         .timeout(const Duration(seconds: 15));
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      return data.map((j) => ApiProduct.fromJson(j)).toList();
+      final data = jsonDecode(response.body);
+      final List<dynamic> meals = data['meals'] ?? [];
+      return meals
+          .asMap()
+          .entries
+          .map((e) => ApiProduct.fromMealJson(e.value, e.key + 1))
+          .toList();
     } else {
       throw Exception('Server error: ${response.statusCode}');
     }

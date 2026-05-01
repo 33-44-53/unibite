@@ -3,7 +3,7 @@ import '../services/api_service.dart';
 import '../services/language_service.dart';
 
 // Topic 5: Networking & API Integration
-// - Fetches from https://fakestoreapi.com/products
+// - Fetches from https://www.themealdb.com/api/json/v1/1/search.php
 // - JSON parsing, loading indicator, error handling
 class ApiMenuScreen extends StatefulWidget {
   const ApiMenuScreen({super.key});
@@ -66,7 +66,7 @@ class _ApiMenuScreenState extends State<ApiMenuScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(t('Online Store', 'የኦንላይን መደብር'),
+        title: Text(t('Online Meals', 'የኦንላይን ምግቦች'),
             style: const TextStyle(fontWeight: FontWeight.bold)),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _fetch, tooltip: t('Refresh', 'አድስ')),
@@ -84,7 +84,7 @@ class _ApiMenuScreenState extends State<ApiMenuScreen> {
                 const Icon(Icons.cloud_done, color: Color(0xFF2E7D32), size: 16),
                 const SizedBox(width: 8),
                 Text(
-                  t('Live data from fakestoreapi.com', 'ቀጥታ ውሂብ ከ fakestoreapi.com'),
+                  t('Live data from themealdb.com', 'ቀጥታ ውሂብ ከ themealdb.com'),
                   style: const TextStyle(fontSize: 12, color: Color(0xFF2E7D32), fontWeight: FontWeight.w600),
                 ),
               ],
@@ -97,7 +97,7 @@ class _ApiMenuScreenState extends State<ApiMenuScreen> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: t('Search products...', 'ምርቶችን ፈልግ...'),
+                hintText: t('Search meals...', 'ምግቦችን ፈልግ...'),
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(icon: const Icon(Icons.clear), onPressed: () => _searchController.clear())
@@ -156,7 +156,7 @@ class _ApiMenuScreenState extends State<ApiMenuScreen> {
     }
 
     if (_filtered.isEmpty) {
-      return Center(child: Text(t('No products found', 'ምንም ምርት አልተገኘም'),
+      return Center(child: Text(t('No meals found', 'ምንም ምግብ አልተገኘም'),
           style: const TextStyle(color: Colors.grey)));
     }
 
@@ -218,8 +218,8 @@ class _ProductCard extends StatelessWidget {
                         style: const TextStyle(fontSize: 11, color: Color(0xFF2E7D32))),
                   ),
                   const SizedBox(height: 6),
-                  Text('\$${product.price.toStringAsFixed(2)}',
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFFFF6F00))),
+                  Text(product.description,
+                      style: const TextStyle(fontSize: 12, color: Colors.grey)),
                 ],
               ),
             ),
