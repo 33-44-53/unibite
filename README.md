@@ -1,13 +1,12 @@
-# 🍽️ UniBite
-### University Student Café Contract Management App
+# 🍽️ UniBite — University Student Café Management App
 
-> **Built with Flutter · Bilingual (English & Amharic) · Fully Offline**
+> **Last Updated:** April 30, 2026 · Built with Flutter · Bilingual (English & Amharic) · Fully Offline
 
 ---
 
 ## 🎥 Demo Video
 
-> 📹 **[Watch Full Presentation on Loom](https://www.loom.com/share/cc5f1dd8b10b40f5bc1c6b8d643ffe1f)**
+> 📹 **[Watch Full Presentation on Loom](https://www.loom.com/share/b1d42cc98bb84e40b6a983fd776444fc)**
 > - Live demo on real Android device
 > - Full code walkthrough
 > - Use case trace explanation
@@ -20,7 +19,7 @@
 > ✅ **[Download unibite.apk](https://github.com/33-44-53/unibite/raw/main/build/app/outputs/flutter-apk/unibite.apk)**
 >
 > - Min Android: 5.0 (API 21)
-> - Size: ~48.7 MB
+> - Size: ~17.3 MB
 >
 > **Install:** Download → tap APK → enable Unknown Sources → Install
 
@@ -39,9 +38,9 @@ Home Screen  (balance card + order meals)
     ├── 🍳 Order Breakfast / Lunch / Dinner
     │       └── Select multiple foods + quantity control
     ├── 💰 Deposit Funds  (CBE, TeleBirr, M-Pesa, eBirr)
-    ├── 📖 Café Menu  (15 Ethiopian dishes in Amharic & English)
+    ├── 📖 Café Menu  (live meals from TheMealDB API)
     ├── 📋 Transaction History  (purchases + deposits)
-    ├── 🌐 Online Store  (live data from public API)
+    ├── 🌐 Online Meals  (live data from TheMealDB API)
     └── 👤 Profile  (photo, stats, reset account)
 ```
 
@@ -56,8 +55,8 @@ Home Screen  (balance card + order meals)
 | 🍳 Order Meals | Breakfast, Lunch & Dinner — select multiple foods with quantity (e.g. 3× Tibs) |
 | 🏦 Deposit Funds | Simulated deposits via CBE Birr, TeleBirr, M-Pesa & eBirr with real logos |
 | 📋 Transaction History | Full history of purchases and deposits with totals summary |
-| 📖 Café Menu | 15 authentic Ethiopian dishes with Amharic names and descriptions |
-| 🌐 Online Store | Live product data fetched from `fakestoreapi.com` with search |
+| 📖 Café Menu | Live meals fetched from TheMealDB API with category filter and search |
+| 🌐 Online Meals | Live meal data fetched from `themealdb.com` with loading indicator and error handling |
 | 📷 Profile Photo | Take or pick a photo using device camera or gallery |
 | 🇪🇹 Bilingual | Full English ↔ Amharic toggle — one tap switches the entire app |
 | 💾 Local Storage | All data persisted using SharedPreferences — works fully offline |
@@ -77,7 +76,7 @@ Home Screen  (balance card + order meals)
 | permission_handler | ^11.3.1 | Device permission handling |
 | intl | ^0.19.0 | Date formatting |
 
-**API Used:** [FakeStore API](https://fakestoreapi.com/products) — free public REST API
+**API Used:** [TheMealDB](https://www.themealdb.com/api/json/v1/1/search.php) — free public food/meal REST API
 
 ---
 
@@ -87,15 +86,15 @@ Home Screen  (balance card + order meals)
 |---|---|---|---|
 | Topic 2 | Stateless & Stateful widgets | `BalanceCard` (Stateless), `_HomeScreenState` (Stateful) | ✅ |
 | Topic 2 | Row / Column / Stack layouts | Used throughout all screens | ✅ |
-| Topic 2 | Forms & input fields | Register, Login forms with full validation | ✅ |
+| Topic 2 | Forms & input fields | Register, Login, Deposit forms with full validation | ✅ |
 | Topic 2 | Snackbar & Dialog | Order confirmation, insufficient balance dialog, logout dialog | ✅ |
 | Topic 3 | Navigator push/pop | All screen transitions with data passing | ✅ |
 | Topic 3 | Data passing between screens | Balance returned from DepositScreen to HomeScreen | ✅ |
 | Topic 3 | setState() | Used in all stateful screens | ✅ |
 | Topic 3 | Structured state | `AppLanguage` ChangeNotifier for language toggle | ✅ |
 | Topic 4 | SharedPreferences | Accounts, balance, transactions, photo path — all persisted | ✅ |
-| Topic 5 | Fetch from public API | `https://fakestoreapi.com/products` | ✅ |
-| Topic 5 | JSON parsing | `ApiProduct.fromJson()` in `api_service.dart` | ✅ |
+| Topic 5 | Fetch from public API | `https://www.themealdb.com/api/json/v1/1/search.php` | ✅ |
+| Topic 5 | JSON parsing | `ApiProduct.fromMealJson()` in `api_service.dart` | ✅ |
 | Topic 5 | Loading indicator | `CircularProgressIndicator` while fetching | ✅ |
 | Topic 5 | Error handling | WiFi-off icon + retry button on failure | ✅ |
 | Topic 6 | image_picker plugin | Camera and gallery photo selection | ✅ |
@@ -111,19 +110,19 @@ unibite/
 ├── lib/
 │   ├── main.dart                    # App entry point + theme
 │   ├── models/
-│   │   └── menu_item.dart           # MenuItem model + 15 Ethiopian dishes
+│   │   └── menu_item.dart           # MenuItem model + Ethiopian dishes data
 │   ├── screens/
 │   │   ├── splash_screen.dart       # Animated splash with auto-navigation
 │   │   ├── landing_screen.dart      # Animated landing with feature showcase
 │   │   ├── login_screen.dart        # Login + Register tabs with validation
 │   │   ├── home_screen.dart         # Balance card + meal ordering
-│   │   ├── menu_screen.dart         # Café menu with category filter & search
+│   │   ├── menu_screen.dart         # Café menu fetched from TheMealDB API
 │   │   ├── history_screen.dart      # Transaction history with summary
 │   │   ├── profile_screen.dart      # Profile photo + stats (Topic 6)
 │   │   ├── deposit_screen.dart      # Deposit via CBE, TeleBirr, M-Pesa, eBirr
-│   │   └── api_menu_screen.dart     # Online store from API (Topic 5)
+│   │   └── api_menu_screen.dart     # Online meals from TheMealDB (Topic 5)
 │   ├── services/
-│   │   ├── api_service.dart         # HTTP fetch + JSON parsing
+│   │   ├── api_service.dart         # HTTP fetch + JSON parsing from TheMealDB
 │   │   ├── storage_service.dart     # All SharedPreferences operations
 │   │   └── language_service.dart    # English/Amharic language toggle
 │   └── widgets/
@@ -135,7 +134,7 @@ unibite/
 │   ├── mpesa.png                    # M-Pesa logo
 │   └── ebirr.png                    # eBirr logo
 └── build/app/outputs/flutter-apk/
-    └── unibite.apk                  # Release APK
+    └── unibite.apk                  # Release APK (~17.3 MB)
 ```
 
 ---
@@ -159,7 +158,7 @@ flutter run -d chrome
 flutter run
 
 # 6. Build release APK
-flutter build apk --release
+flutter build apk --release --target-platform android-arm64
 ```
 
 ---
