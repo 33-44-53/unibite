@@ -6,7 +6,7 @@
 
 ## 🎥 Demo Video
 
-> 📹 **[Watch Full Presentation on Loom](https://www.loom.com/share/b1d42cc98bb84e40b6a983fd776444fc)**
+> 📹 **[Watch Full Presentation on Loom](https://www.loom.com/share/cc5f1dd8b10b40f5bc1c6b8d643ffe1f)**
 > - Live demo on real Android device
 > - Full code walkthrough
 > - Use case trace explanation
